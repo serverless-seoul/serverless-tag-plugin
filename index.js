@@ -71,7 +71,7 @@ class ServerlessPlugin {
       });
 
       Object.assign(functionDef.tags, {
-        Name: `${this.data.serviceName}-${functionName}:${this.data.stage}:${this.data.region}`
+        Name: `${this.data.serviceName}-${functionName}:${this.data.stage}:${this.data.region}`,
         SERVICE_NAME: this.data.serviceName,
         STAGE: this.data.stage,
       });
