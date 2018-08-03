@@ -15,7 +15,7 @@ class ServerlessPlugin {
     const { service } = this.serverless;
 
     this.data = {
-      serviceName: this.serverless.service.service,
+      serviceName: service.service, // "service" is looks like serverless.yml, so "service.service" means "service name"
       region: this.options.region || service.provider.region,
       stage: this.options.stage || service.provider.stage,
     };
@@ -56,25 +56,6 @@ class ServerlessPlugin {
 
     const { service } = this.serverless;
 
-    // Check tags field has defined
-    if (!service.provider.tags) {
-      this.log('Detected provider.tags definition is missing, injecting empty object...');
-      service.provider.tags = {};
-    }
-
-    if (service.provider.tags.SERVICE_NAME) {
-      this.log('CAUTION! SERVICE_NAME on service-level tag is already defined! it will be overwritten!')
-    }
-
-    Object.assign(service.provider.tags, {
-      SERVICE_NAME: this.data.serviceName,
-      STAGE: this.data.stage,
-    });
-
-    this.log('Injected service-level function tags: ', service.provider.tags);
-
-    this.log('Injecting function-level function tags...');
-
     Object.keys(service.functions).forEach((functionName) => {
       const functionDef = service.functions[functionName];
 
@@ -83,12 +64,16 @@ class ServerlessPlugin {
         functionDef.tags = {};
       }
 
-      if (functionDef.tags.Name) {
-        this.log('CAUTION! Function "%s" already have Name tag. It will be overwritten!', functionName);
-      }
+      ['Name', 'SERVICE_NAME', 'STAGE'].forEach((tagName) => {
+        if (functionDef.tags[tagName]) {
+          this.log('CAUTION! Function "%s" already have %s tag. It will be overwritten!', functionName, tagName);
+        }
+      });
 
       Object.assign(functionDef.tags, {
         Name: `${this.data.serviceName}-${functionName}:${this.data.stage}:${this.data.region}`
+        SERVICE_NAME: this.data.serviceName,
+        STAGE: this.data.stage,
       });
 
       this.log('Injected function tags: ', functionDef.tags);
