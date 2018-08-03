@@ -68,6 +68,7 @@ class ServerlessPlugin {
 
     Object.assign(service.provider.tags, {
       SERVICE_NAME: this.data.serviceName,
+      STAGE: this.data.stage,
     });
 
     this.log('Injected service-level function tags: ', service.provider.tags);
@@ -105,6 +106,7 @@ class ServerlessPlugin {
       tags: {
         Name: `${this.data.serviceName}:${this.data.stage}:${this.data.region}`,
         SERVICE_NAME: this.data.serviceName,
+        STAGE: this.data.stage,
       },
     });
 
@@ -113,9 +115,9 @@ class ServerlessPlugin {
 
   log(...args) {
     if (typeof args[0] === 'string') {
-      args[0] = `@vingle/serverless-tags ${args[0]}`;
+      args[0] = `@vingle/serverless-tag-plugin ${args[0]}`;
     } else {
-      args.unshift(`@vingle/serverless-tags`);
+      args.unshift(`@vingle/serverless-tag-plugin`);
     }
 
     this.serverless.cli.log(util.format(...args));
