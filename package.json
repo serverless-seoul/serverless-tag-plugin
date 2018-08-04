@@ -1,0 +1,24 @@
+{
+  "name": "@vingle/serverless-tag-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balmbees/serverless-tag.git"
+  },
+  "keywords": [
+    "serverless",
+    "tag",
+    "aws"
+  ],
+  "author": "MooYeol Prescott Lee <mooyoul@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/balmbees/serverless-tag/issues"
+  },
+  "homepage": "https://github.com/balmbees/serverless-tag#readme"
+}
