@@ -31,24 +31,26 @@ class ServerlessPlugin {
     }
   }
 
-  async getApiId(stage) {
-    const [ stack ] = (await this.provider.request('CloudFormation', 'describeStacks', {
+  getApiId(stage) {
+    return this.provider.request('CloudFormation', 'describeStacks', {
       StackName: this.provider.naming.getStackName(stage),
-    })).Stacks;
+    }).then((data) => {
+      const [ stack ] = data.Stacks;
 
-    const stackOutputs = stack.Outputs;
+      const stackOutputs = stack.Outputs;
 
-    const apiEndpointUrls = stackOutputs
-      .filter((output) => output.OutputKey.includes('ServiceEndpoint'))
-      .map((output) => output.OutputValue);
+      const apiEndpointUrls = stackOutputs
+        .filter((output) => output.OutputKey.includes('ServiceEndpoint'))
+        .map((output) => output.OutputValue);
 
-    const apiIds = apiEndpointUrls.map((endpointUrl) => {
-      const [ , apiId ] = endpointUrl.match('https:\/\/(.*)\\.execute-api');
+      const apiIds = apiEndpointUrls.map((endpointUrl) => {
+        const [ , apiId ] = endpointUrl.match('https:\/\/(.*)\\.execute-api');
 
-      return apiId;
+        return apiId;
+      });
+
+      return apiIds[0];
     });
-
-    return apiIds[0];
   }
 
   beforeSetupProviderConfiguration() {
@@ -80,22 +82,26 @@ class ServerlessPlugin {
     });
   }
 
-  async afterDeploy() {
+  afterDeploy() {
     this.log('Getting deployed apiId');
-    const apiId = await this.getApiId(this.data.stage);
 
-    this.log('Tagging API Gateway resource... (apiId: %s)', apiId);
+    return this.getApiId(this.data.stage)
+      .then((apiId) => {
+        this.log('Tagging API Gateway resource... (apiId: %s)', apiId);
 
-    await this.provider.request('APIGateway', 'tagResource', {
-      resourceArn: `arn:aws:apigateway:${this.data.region}::/restapis/${apiId}/stages/${this.data.stage}`,
-      tags: {
-        Name: `${this.data.serviceName}:${this.data.stage}:${this.data.region}`,
-        SERVICE_NAME: this.data.serviceName,
-        STAGE: this.data.stage,
-      },
-    });
-
-    this.log('Done');
+        return this.provider.request('APIGateway', 'tagResource', {
+          resourceArn: `arn:aws:apigateway:${this.data.region}::/restapis/${apiId}/stages/${this.data.stage}`,
+          tags: {
+            Name: `${this.data.serviceName}:${this.data.stage}:${this.data.region}`,
+            SERVICE_NAME: this.data.serviceName,
+            STAGE: this.data.stage,
+          },
+        });
+      })
+      .then((v) => {
+        this.log('Done');
+        return v;
+      });
   }
 
   log(...args) {
