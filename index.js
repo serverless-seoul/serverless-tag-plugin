@@ -49,7 +49,11 @@ class ServerlessPlugin {
         return apiId;
       });
 
-      return apiIds[0];
+      if (apiIds.length > 0) {
+        return apiIds[0];
+      } else {
+        return null;
+      }
     });
   }
 
@@ -87,16 +91,20 @@ class ServerlessPlugin {
 
     return this.getApiId(this.data.stage)
       .then((apiId) => {
-        this.log('Tagging API Gateway resource... (apiId: %s)', apiId);
+        if (apiId) {
+          this.log('Tagging API Gateway resource... (apiId: %s)', apiId);
 
-        return this.provider.request('APIGateway', 'tagResource', {
-          resourceArn: `arn:aws:apigateway:${this.data.region}::/restapis/${apiId}/stages/${this.data.stage}`,
-          tags: {
-            Name: `${this.data.serviceName}:${this.data.stage}:${this.data.region}`,
-            SERVICE_NAME: this.data.serviceName,
-            STAGE: this.data.stage,
-          },
-        });
+          return this.provider.request('APIGateway', 'tagResource', {
+            resourceArn: `arn:aws:apigateway:${this.data.region}::/restapis/${apiId}/stages/${this.data.stage}`,
+            tags: {
+              Name: `${this.data.serviceName}:${this.data.stage}:${this.data.region}`,
+              SERVICE_NAME: this.data.serviceName,
+              STAGE: this.data.stage,
+            },
+          });
+        } else {
+          this.log('No API Gateway to tag, Skip');
+        }
       })
       .then((v) => {
         this.log('Done');
