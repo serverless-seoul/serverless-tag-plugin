@@ -83,6 +83,25 @@ class ServerlessPlugin {
   }
 
   afterDeploy() {
+    const hasAPIGatewayResource = (() => {
+      if (this.serverless.service.resources && this.serverless.service.resources.Resources) {
+        const resources = this.serverless.service.resources.Resources;
+
+        return Object.keys(resources).some((key) => {
+          const resource = resources[key];
+
+          return resource && resource.Type === 'AWS::ApiGateway::RestApi';
+        });
+      }
+
+      return false;
+    })();
+
+    if (!hasAPIGatewayResource) {
+      this.log('This stack does not have any API Gateway resource. Skip API Gateway tagging...');
+      return;
+    }
+
     this.log('Getting deployed apiId');
 
     return this.getApiId(this.data.stage)
