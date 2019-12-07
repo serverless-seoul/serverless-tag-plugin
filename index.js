@@ -12,16 +12,8 @@ class ServerlessPlugin {
     this.options = options;
     this.provider = this.serverless.getProvider(this.serverless.service.provider.name);
 
-    const { service } = this.serverless;
-
-    this.data = {
-      serviceName: service.service, // "service" is looks like serverless.yml, so "service.service" means "service name"
-      region: this.options.region || service.provider.region,
-      stage: this.options.stage || service.provider.stage,
-    };
-
     // Check Provideer
-    if (service.provider.name === 'aws') {
+    if (this.serverless.service.provider.name === 'aws') {
       this.hooks = {
         'before:package:setupProviderConfiguration': this.beforeSetupProviderConfiguration.bind(this),
         'after:deploy:deploy': this.afterDeploy.bind(this)
@@ -57,6 +49,12 @@ class ServerlessPlugin {
     this.log('Injecting service-level function tags...');
 
     const { service } = this.serverless;
+
+    this.data = {
+      serviceName: service.service, // "service" is looks like serverless.yml, so "service.service" means "service name"
+      region: this.options.region || service.provider.region,
+      stage: this.options.stage || service.provider.stage,
+    };
 
     Object.keys(service.functions).forEach((functionName) => {
       const functionDef = service.functions[functionName];
