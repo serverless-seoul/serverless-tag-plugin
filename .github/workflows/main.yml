@@ -1,5 +1,5 @@
 # @note currently github actions does not support `skip ci` commit message filtering
-name: CI
+name: workflow
 on: push
 jobs:
   job:
