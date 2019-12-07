@@ -1,0 +1,16 @@
+dst/**/__test__
+script
+node_modules
+src
+Jenkinsfile
+.npm
+*.js.map
+.DS_Store
+.idea
+.vscode
+.github
+renovate.json
+tsconfig*.json
+tslint.json
+.releaserc.json
+
