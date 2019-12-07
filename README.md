@@ -1,5 +1,7 @@
 # @vingle/serverless-tag-plugin
 
+[![Build Status](https://github.com/balmbees/serverless-tag-plugin/workflows/workflow/badge.svg)](https://github.com/balmbees/serverless-tag-plugin/actions)
+
 Automatically tags API Gateway and Lambda functions.
 
 
