@@ -20,5 +20,25 @@
   "bugs": {
     "url": "https://github.com/balmbees/serverless-tag/issues"
   },
-  "homepage": "https://github.com/balmbees/serverless-tag#readme"
+  "homepage": "https://github.com/balmbees/serverless-tag#readme",
+  "devDependencies": {
+    "@vingle/commitlint-preset": "1.0.3",
+    "@vingle/semantic-release-config": "1.0.3",
+    "husky": "3.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@vingle/commitlint-preset"
+    ]
+  }
 }
