@@ -23,7 +23,7 @@
   "homepage": "https://github.com/balmbees/serverless-tag#readme",
   "devDependencies": {
     "@vingle/commitlint-preset": "1.0.3",
-    "@vingle/semantic-release-config": "1.0.5",
+    "@vingle/semantic-release-config": "2.0.0",
     "husky": "3.1.0"
   },
   "config": {
